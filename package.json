@@ -1,0 +1,21 @@
+{
+  "name": "make-it-meme-tr",
+  "version": "1.0.0",
+  "description": "Basit 4 kişilik online meme oyunu (Türkçe)",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [
+    "meme",
+    "socket.io",
+    "express",
+    "oyun"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
+  }
+}

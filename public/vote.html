@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AbiBuNe – Oylama</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body{display:flex;flex-direction:column;align-items:center;padding:20px;background:#121212;color:#fff;font-family:Arial,Helvetica,sans-serif}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:20px;width:100%;max-width:1400px}
+    .meme-card{background:#1f1f1f;border-radius:8px;padding:10px;display:flex;flex-direction:column;align-items:center}
+    .meme-card img{max-width:100%;border-radius:6px}
+    .vote-btns{margin-top:10px;display:flex;gap:8px}
+    .vote-btns button{flex:1;padding:6px 0;border:none;border-radius:4px;font-size:20px;cursor:pointer}
+    .like{background:#28a745}
+    .dislike{background:#dc3545}
+    .babapro{background:#ffc107;color:#000;font-weight:bold}
+    .disabled{opacity:0.5;pointer-events:none}
+  </style>
+</head>
+<body>
+  <h1>Oylama Zamanı</h1>
+  <p>Tüm meme'lere göz at ve oy ver!</p>
+  <div id="memeGrid" class="grid"></div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/vote.js"></script>
+</body>
+</html>

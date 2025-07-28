@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Make it Meme TR – Oyun</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="container">
+    <h2 id="templateName"></h2>
+    <div id="timer" style="font-weight:bold; margin-bottom:8px;"></div>
+    <canvas id="memeCanvas" width="500" height="500"></canvas>
+    <input type="text" id="captionInput" placeholder="Caption ekle" maxlength="60" />
+    <button id="sendBtn">Gönder</button>
+    <div id="voteArea" style="display:none; margin-top:20px;"></div>
+  </div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/game.js"></script>
+</body>
+</html>

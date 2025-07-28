@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AbiBuNe – Lobby</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <nav class="top-nav">
+    <div class="logo-section">
+      <div class="logo">ABN</div>
+      <span class="logo-text">AbiBuNe</span>
+    </div>
+    <div class="nav-actions">
+      <button class="nav-btn" onclick="showProfile()">👤 Profil</button>
+      <button class="nav-btn" onclick="showLeaderboard()">🏆 Sıralama</button>
+      <button class="nav-btn" onclick="showAchievements()">🏅 Başarılar</button>
+      <button class="nav-btn" onclick="showSettings()">⚙️ Ayarlar</button>
+    </div>
+  </nav>
+  
+  <div class="main-container">
+    <div class="hero-section">
+      <h1 class="title">ABİ BU<br><span class="title-meme">NE</span></h1>
+      <p class="subtitle">Arkadaşlarınla en komik meme'leri oluştur!</p>
+    </div>
+    
+    <div class="game-modes" id="gameModes">
+      <div class="mode-card quick-game" data-mode="quick">
+        <div class="card-header">
+          <div class="card-icon">⚡</div>
+          <div class="card-badge">Popüler</div>
+        </div>
+        <h3>Hızlı Oyun</h3>
+        <p>Rastgele oyuncularla anında eşleş</p>
+        <div class="card-stats">
+          <span>👥 2-6 oyuncu</span>
+          <span>⏱️ 1-2 dakika</span>
+        </div>
+      </div>
+      
+      <div class="mode-card private-game" data-mode="private">
+        <div class="card-header">
+          <div class="card-icon">🔒</div>
+          <div class="card-badge premium">Premium</div>
+        </div>
+        <h3>Özel Oda</h3>
+        <p>Arkadaşlarınla özel oda kur</p>
+        <div class="card-stats">
+          <span>👥 2-8 oyuncu</span>
+          <span>🎯 Özel kurallar</span>
+        </div>
+      </div>
+      
+      <div class="mode-card custom-game" data-mode="custom">
+        <div class="card-header">
+          <div class="card-icon">🎨</div>
+          <div class="card-badge new">Yeni</div>
+        </div>
+        <h3>Yaratıcı Mod</h3>
+        <p>Kendi template'lerini yükle</p>
+        <div class="card-stats">
+          <span>🖼️ Özel resimler</span>
+          <span>🏆 Turnuva modu</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="daily-challenge" id="dailyChallenge">
+      <div class="challenge-header">
+        <h3>🎆 Günlük Meydan Okuma</h3>
+        <span class="challenge-timer" id="challengeTimer">23:45:12</span>
+      </div>
+      <div class="challenge-content">
+        <div class="challenge-icon">😂</div>
+        <div class="challenge-info">
+          <h4>Komedi Kraliçesi</h4>
+          <p>5 oyunda en az 3 oy al</p>
+          <div class="challenge-progress">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width: 60%"></div>
+            </div>
+            <span class="progress-text">3/5 tamamlandı</span>
+          </div>
+        </div>
+        <div class="challenge-reward">
+          <span class="reward-text">+500 XP</span>
+          <span class="reward-coins">🪙 +50</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="quick-actions">
+      <button class="quick-btn" onclick="joinRandomGame()">🎲 Rastgele Katıl</button>
+      <button class="quick-btn" onclick="createRoom()">➕ Oda Oluştur</button>
+      <button class="quick-btn" onclick="showJoinByCode()">🔑 Kod ile Katıl</button>
+      <button class="quick-btn" onclick="showTournament()">🏆 Turnuva</button>
+    </div>
+    
+    <!-- Room Code Input Section -->
+    <div id="roomCodeSection" class="room-code-section" style="display: none;">
+      <div class="room-code-input-container">
+        <h3>🔗 Oda Kodunu Gir</h3>
+        <div class="input-group">
+          <input type="text" id="roomCodeInput" placeholder="Oda kodunu buraya yaz..." maxlength="6">
+          <button class="join-btn" onclick="joinWithCode()">Katıl</button>
+        </div>
+        <button class="back-btn" onclick="hideJoinByCode()">← Geri Dön</button>
+      </div>
+    </div>
+    
+    <div class="player-stats" id="playerStats">
+      <div class="stat-card">
+        <div class="stat-icon">🏅</div>
+        <div class="stat-info">
+          <span class="stat-value">0</span>
+          <span class="stat-label">XP</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🪙</div>
+        <div class="stat-info">
+          <span class="stat-value">0</span>
+          <span class="stat-label">Coin</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🔥</div>
+        <div class="stat-info">
+          <span class="stat-value">0</span>
+          <span class="stat-label">Seri</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon">🏆</div>
+        <div class="stat-info">
+          <span class="stat-value">#42</span>
+          <span class="stat-label">Sıra</span>
+        </div>
+      </div>
+    </div>
+    
+    <div class="username-section" id="usernameSection" style="display:none;">
+      <h2>Oyun Ayarları</h2>
+      
+      <div class="game-settings">
+        <div class="setting-group">
+          <label for="playerCount">Oyuncu Sayısı</label>
+          <div class="player-selector">
+            <button type="button" class="count-btn" data-count="2">2</button>
+            <button type="button" class="count-btn active" data-count="3">3</button>
+            <button type="button" class="count-btn" data-count="4">4</button>
+            <button type="button" class="count-btn" data-count="5">5</button>
+            <button type="button" class="count-btn" data-count="6">6</button>
+          </div>
+        </div>
+        
+        <div class="setting-group">
+          <label for="roundTime">Tur Süresi</label>
+          <div class="time-selector">
+            <button type="button" class="time-btn" data-time="30">30s</button>
+            <button type="button" class="time-btn active" data-time="60">60s</button>
+            <button type="button" class="time-btn" data-time="90">90s</button>
+            <button type="button" class="time-btn" data-time="120">2dk</button>
+          </div>
+        </div>
+        
+        <div class="setting-group">
+          <label for="gameMode">Oyun Modu</label>
+          <div class="mode-info">
+            <span class="mode-name" id="selectedModeName">Hızlı Oyun</span>
+            <span class="mode-desc" id="selectedModeDesc">Rastgele oyuncularla hemen başla</span>
+          </div>
+        </div>
+      </div>
+      
+      <form id="usernameForm">
+        <input type="text" id="username" placeholder="Kullanıcı adını gir" required maxlength="15" />
+        <button type="submit" class="btn-primary">Oda Oluştur</button>
+      </form>
+      <button class="btn-back" onclick="showGameModes()">← Geri Dön</button>
+    </div>
+    
+    <div class="lobby-section" id="lobbySection" style="display:none;">
+      <div class="lobby-header">
+        <h2>🎮 Oyun Lobisi</h2>
+        <button class="leave-btn" onclick="leaveLobby()">❌ Ayrıl</button>
+      </div>
+      
+      <div class="lobby-info">
+        <div class="room-details">
+          <span class="room-code">🏠 Oda: #<span id="roomCode">ABC123</span></span>
+          <button class="copy-code" onclick="copyRoomCode()">📋</button>
+        </div>
+        <div class="game-info">
+          <span class="player-count">👥 <span id="playerCount">1</span>/4 Oyuncu</span>
+          <span class="game-mode">⚡ Hızlı Oyun</span>
+        </div>
+      </div>
+      
+      <div class="players-grid">
+        <ul id="playerList"></ul>
+        <div class="waiting-slots" id="waitingSlots"></div>
+      </div>
+      
+      <div class="lobby-status">
+        <p id="status">Diğer oyuncular bekleniyor...</p>
+        <div class="status-indicator">
+          <div class="pulse"></div>
+        </div>
+      </div>
+      
+      <div class="lobby-actions">
+        <button class="action-btn invite" onclick="inviteFriends()">👥 Arkadaş Davet Et</button>
+        <button class="action-btn settings" onclick="changeLobbySettings()">⚙️ Ayarları Değiştir</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modals -->
+  <div class="modal" id="profileModal" style="display:none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>👤 Profil</h2>
+        <button class="close-btn" onclick="closeModal('profileModal')">✕</button>
+      </div>
+      <div class="profile-info">
+        <div class="avatar-section">
+          <div class="avatar">😎</div>
+          <button class="change-avatar">📷 Değiştir</button>
+        </div>
+        <div class="user-details">
+          <h3>Oyuncu123</h3>
+          <p class="user-level">Seviye 15 - Meme Ustasi</p>
+          <div class="level-progress">
+            <div class="level-bar">
+              <div class="level-fill" style="width: 75%"></div>
+            </div>
+            <span>1,247 / 1,500 XP</span>
+          </div>
+        </div>
+      </div>
+      <div class="profile-stats">
+        <div class="profile-stat">
+          <span class="stat-number">156</span>
+          <span class="stat-name">Oyun</span>
+        </div>
+        <div class="profile-stat">
+          <span class="stat-number">89</span>
+          <span class="stat-name">Galibiyet</span>
+        </div>
+        <div class="profile-stat">
+          <span class="stat-number">57%</span>
+          <span class="stat-name">Kazanç</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal" id="leaderboardModal" style="display:none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>🏆 Sıralama</h2>
+        <button class="close-btn" onclick="closeModal('leaderboardModal')">✕</button>
+      </div>
+      <div class="leaderboard-tabs">
+        <button class="tab-btn active" onclick="showLeaderboardTab('weekly')">Haftalık</button>
+        <button class="tab-btn" onclick="showLeaderboardTab('monthly')">Aylık</button>
+        <button class="tab-btn" onclick="showLeaderboardTab('alltime')">Tüm Zamanlar</button>
+      </div>
+      <div class="leaderboard-list" id="leaderboardList">
+        <div class="leaderboard-item top-3">
+          <span class="rank">🥇</span>
+          <span class="player-name">MemeLord</span>
+          <span class="score">2,450 XP</span>
+        </div>
+        <div class="leaderboard-item top-3">
+          <span class="rank">🥈</span>
+          <span class="player-name">FunnyGuy</span>
+          <span class="score">2,200 XP</span>
+        </div>
+        <div class="leaderboard-item top-3">
+          <span class="rank">🥉</span>
+          <span class="player-name">JokeKing</span>
+          <span class="score">1,980 XP</span>
+        </div>
+        <div class="leaderboard-item">
+          <span class="rank">4</span>
+          <span class="player-name">LaughMaster</span>
+          <span class="score">1,750 XP</span>
+        </div>
+        <div class="leaderboard-item current-player">
+          <span class="rank">42</span>
+          <span class="player-name">Sen</span>
+          <span class="score">1,247 XP</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="modal" id="achievementsModal" style="display:none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>🏅 Başarılar</h2>
+        <button class="close-btn" onclick="closeModal('achievementsModal')">✕</button>
+      </div>
+      <div class="achievements-grid">
+        <div class="achievement-item unlocked">
+          <div class="achievement-icon">🎆</div>
+          <div class="achievement-info">
+            <h4>İlk Adım</h4>
+            <p>İlk oyununu tamamla</p>
+          </div>
+          <div class="achievement-reward">+50 XP</div>
+        </div>
+        <div class="achievement-item unlocked">
+          <div class="achievement-icon">😂</div>
+          <div class="achievement-info">
+            <h4>Komedi Yeteneği</h4>
+            <p>10 oyunda oy al</p>
+          </div>
+          <div class="achievement-reward">+100 XP</div>
+        </div>
+        <div class="achievement-item locked">
+          <div class="achievement-icon">🔒</div>
+          <div class="achievement-info">
+            <h4>Meme Ustasi</h4>
+            <p>100 oyun kazan</p>
+          </div>
+          <div class="achievement-reward">+500 XP</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="floating-shapes">
+    <div class="shape shape-1"></div>
+    <div class="shape shape-2"></div>
+    <div class="shape shape-3"></div>
+    <div class="shape shape-4"></div>
+    <div class="shape shape-5"></div>
+    <div class="shape shape-6"></div>
+  </div>
+  
+  <div class="notification-container" id="notifications"></div>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="js/lobby.js"></script>
+  <div id="countdownOverlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);color:#fff;font-size:120px;font-family:'Impact';justify-content:center;align-items:center;z-index:9999;">3</div>
+</body>
+</html>
