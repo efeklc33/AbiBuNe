@@ -77,12 +77,57 @@ function autoSubmit() {
 sendBtn.addEventListener('click', () => {
   const text = captionInput.value.trim();
   if (submitted) return;
+  console.debug('Sending caption:', { roomId, templateFile, text });
   socket.emit('submit-caption', {
     roomId,
     templateId: templateFile,
     text,
   });
   sendBtn.disabled = true;
+  submitted = true;
+  
+  // Show waiting message
+  captionInput.placeholder = 'Caption gönderildi, diğer oyuncular bekleniyor...';
+  captionInput.disabled = true;
+  
+  // Add manual voting trigger button for testing
+  setTimeout(() => {
+    if (document.getElementById('votingSection').style.display === 'none') {
+      const testBtn = document.createElement('button');
+      testBtn.textContent = '📝 Test Oylama Başlat';
+      testBtn.style.cssText = 'margin-top:10px;padding:10px 20px;background:#ff6b6b;border:none;border-radius:8px;color:white;cursor:pointer;';
+      testBtn.onclick = () => {
+        console.debug('Manual voting trigger clicked');
+        const fakeVoteData = {
+          captions: [
+            {
+              playerId: socket.id,
+              imageUrl: canvas.toDataURL(),
+              text: text || 'Test caption'
+            },
+            {
+              playerId: 'bot_player',
+              imageUrl: canvas.toDataURL(), 
+              text: 'Bot yaptı bu meme’i'
+            },
+            {
+              playerId: 'test_player',
+              imageUrl: canvas.toDataURL(),
+              text: 'Test oyuncu caption’ı'
+            }
+          ],
+          roomId: roomId
+        };
+        // Manually trigger the start-vote event
+        const event = new CustomEvent('start-vote');
+        socket.emit('start-vote', fakeVoteData);
+        // Also directly call the handler
+        handleStartVote(fakeVoteData);
+        testBtn.remove();
+      };
+      document.querySelector('.container').appendChild(testBtn);
+    }
+  }, 3000);
 });
 
 socket.on('receive-caption', ({ playerId, username, templateId, text }) => {
@@ -108,12 +153,86 @@ function createVoteButton(item) {
   return btn;
 }
 
-socket.on('start-vote', ({ captions, roomId }) => {
-  console.debug('Received start-vote, redirecting to vote.html');
-  // Save vote data and redirect
-  sessionStorage.setItem('voteData', JSON.stringify({ captions, roomId }));
-  window.location.href = 'vote.html';
-});
+// Create reusable function for starting vote
+function handleStartVote({ captions, roomId }) {
+  console.debug('Starting vote phase with captions:', captions);
+  
+  // Hide game elements
+  document.getElementById('templateName').style.display = 'none';
+  document.getElementById('timer').style.display = 'none';
+  document.getElementById('memeCanvas').style.display = 'none';
+  document.getElementById('captionInput').style.display = 'none';
+  document.getElementById('sendBtn').style.display = 'none';
+  
+  // Remove test button if exists
+  const testBtn = document.querySelector('button[style*="background:#ff6b6b"]');
+  if (testBtn) testBtn.remove();
+  
+  // Show voting section
+  const votingSection = document.getElementById('votingSection');
+  const memeGrid = document.getElementById('memeGrid');
+  votingSection.style.display = 'block';
+  
+  // Clear previous content
+  memeGrid.innerHTML = '';
+  
+  // Create meme cards for voting
+  captions.forEach(caption => {
+    const card = document.createElement('div');
+    card.className = 'meme-card';
+    
+    const img = document.createElement('img');
+    img.src = caption.imageUrl;
+    img.alt = 'Meme';
+    
+    // Add caption text display
+    const captionText = document.createElement('p');
+    captionText.textContent = caption.text || 'Boş caption';
+    captionText.style.cssText = 'color:white;margin:10px 0;font-weight:600;text-align:center;';
+    
+    const voteButtons = document.createElement('div');
+    voteButtons.className = 'vote-btns';
+    
+    const likeBtn = document.createElement('button');
+    likeBtn.className = 'like';
+    likeBtn.textContent = '😂 Beğendim';
+    likeBtn.onclick = () => {
+      socket.emit('vote', { roomId, votedId: caption.playerId, voteType: 'like' });
+      voteButtons.classList.add('disabled');
+      console.debug('Voted like for:', caption.playerId);
+    };
+    
+    const dislikeBtn = document.createElement('button');
+    dislikeBtn.className = 'dislike';
+    dislikeBtn.textContent = '🙄 Beğenmedim';
+    dislikeBtn.onclick = () => {
+      socket.emit('vote', { roomId, votedId: caption.playerId, voteType: 'dislike' });
+      voteButtons.classList.add('disabled');
+      console.debug('Voted dislike for:', caption.playerId);
+    };
+    
+    const babaproBtn = document.createElement('button');
+    babaproBtn.className = 'babapro';
+    babaproBtn.textContent = '🔥 BABAPRO';
+    babaproBtn.onclick = () => {
+      socket.emit('vote', { roomId, votedId: caption.playerId, voteType: 'babapro' });
+      voteButtons.classList.add('disabled');
+      console.debug('Voted babapro for:', caption.playerId);
+    };
+    
+    voteButtons.appendChild(likeBtn);
+    voteButtons.appendChild(dislikeBtn);
+    voteButtons.appendChild(babaproBtn);
+    
+    card.appendChild(img);
+    card.appendChild(captionText);
+    card.appendChild(voteButtons);
+    memeGrid.appendChild(card);
+  });
+}
+
+// Socket event listener
+socket.on('start-vote', handleStartVote);
 
 /* Old inline voting removed
   // Hide caption input
@@ -130,10 +249,51 @@ socket.on('start-vote', ({ captions, roomId }) => {
 */
 
 socket.on('round-result', ({ tally }) => {
-  voteArea.innerHTML = '<h3>Sonuçlar</h3>';
+  console.debug('Received round-result:', tally);
+  
+  // Show results in voting section
+  const votingSection = document.getElementById('votingSection');
+  const memeGrid = document.getElementById('memeGrid');
+  
+  // Update title and clear grid
+  votingSection.querySelector('h1').textContent = 'Oyun Sonuçları';
+  votingSection.querySelector('p').textContent = 'İşte bu turun kazananları!';
+  memeGrid.innerHTML = '';
+  
+  // Create results display
+  const resultsDiv = document.createElement('div');
+  resultsDiv.style.cssText = 'background:rgba(255,255,255,0.1);border-radius:15px;padding:20px;margin:20px auto;max-width:600px;';
+  
+  const resultsTitle = document.createElement('h3');
+  resultsTitle.textContent = 'Sonuçlar';
+  resultsTitle.style.cssText = 'color:#8a2be2;margin-bottom:15px;';
+  resultsDiv.appendChild(resultsTitle);
+  
   Object.entries(tally).forEach(([pid, score]) => {
-    const div = document.createElement('div');
-    div.textContent = `${pid === socket.id ? 'Sen' : pid}: ${score} oy`;
-    voteArea.appendChild(div);
+    const resultItem = document.createElement('div');
+    resultItem.style.cssText = 'display:flex;justify-content:space-between;padding:10px;margin:5px 0;background:rgba(255,255,255,0.05);border-radius:8px;';
+    
+    const playerName = document.createElement('span');
+    playerName.textContent = pid === socket.id ? 'Sen' : pid;
+    playerName.style.color = pid === socket.id ? '#ffc107' : '#ffffff';
+    
+    const scoreSpan = document.createElement('span');
+    scoreSpan.textContent = `${score} oy`;
+    scoreSpan.style.cssText = 'color:#28a745;font-weight:600;';
+    
+    resultItem.appendChild(playerName);
+    resultItem.appendChild(scoreSpan);
+    resultsDiv.appendChild(resultItem);
   });
+  
+  // Add back to lobby button
+  const backBtn = document.createElement('button');
+  backBtn.textContent = '🏠 Lobiye Dön';
+  backBtn.style.cssText = 'margin-top:20px;padding:12px 25px;background:linear-gradient(45deg,#4b0082,#6a0dad);border:none;border-radius:25px;color:white;font-weight:600;cursor:pointer;';
+  backBtn.onclick = () => {
+    window.location.href = 'index.html';
+  };
+  resultsDiv.appendChild(backBtn);
+  
+  memeGrid.appendChild(resultsDiv);
 });

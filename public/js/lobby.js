@@ -284,8 +284,154 @@ function showAchievements() {
 }
 
 function showSettings() {
-  showNotification('Ayarlar yakında gelecek!', 'info');
+  document.getElementById('settingsModal').style.display = 'flex';
 }
+
+function saveSettings() {
+  // Get all setting values
+  const settings = {
+    soundEffects: document.getElementById('soundEffects').checked,
+    music: document.getElementById('music').checked,
+    notifications: document.getElementById('notifications').checked,
+    theme: document.getElementById('themeSelect').value,
+    animations: document.getElementById('animations').checked,
+    fpsCounter: document.getElementById('fpsCounter').checked,
+    debugMode: document.getElementById('debugMode').checked
+  };
+  
+  // Save to localStorage
+  localStorage.setItem('gameSettings', JSON.stringify(settings));
+  
+  // Apply settings
+  applySettings(settings);
+  
+  showNotification('Ayarlar kaydedildi!', 'success');
+  closeModal('settingsModal');
+}
+
+function resetSettings() {
+  // Reset to defaults
+  document.getElementById('soundEffects').checked = true;
+  document.getElementById('music').checked = true;
+  document.getElementById('notifications').checked = true;
+  document.getElementById('themeSelect').value = 'dark';
+  document.getElementById('animations').checked = true;
+  document.getElementById('fpsCounter').checked = false;
+  document.getElementById('debugMode').checked = false;
+  
+  showNotification('Ayarlar sıfırlandı!', 'info');
+}
+
+function loadSettings() {
+  const saved = localStorage.getItem('gameSettings');
+  if (saved) {
+    const settings = JSON.parse(saved);
+    document.getElementById('soundEffects').checked = settings.soundEffects ?? true;
+    document.getElementById('music').checked = settings.music ?? true;
+    document.getElementById('notifications').checked = settings.notifications ?? true;
+    document.getElementById('themeSelect').value = settings.theme ?? 'dark';
+    document.getElementById('animations').checked = settings.animations ?? true;
+    document.getElementById('fpsCounter').checked = settings.fpsCounter ?? false;
+    document.getElementById('debugMode').checked = settings.debugMode ?? false;
+    
+    applySettings(settings);
+  }
+}
+
+function applySettings(settings) {
+  // Apply theme
+  if (settings.theme === 'light') {
+    document.body.classList.add('light-theme');
+  } else {
+    document.body.classList.remove('light-theme');
+  }
+  
+  // Apply animations
+  if (!settings.animations) {
+    document.body.classList.add('no-animations');
+    // Disable particle effects when animations are off
+    if (window.particleSystem) {
+      window.particleSystem.toggleParticles(false);
+    }
+  } else {
+    document.body.classList.remove('no-animations');
+    // Enable particle effects when animations are on
+    if (window.particleSystem) {
+      window.particleSystem.toggleParticles(true);
+    }
+  }
+  
+  // Debug mode
+  if (settings.debugMode) {
+    console.log('Debug mode enabled');
+    window.gameDebug = true;
+    // Show FPS counter if debug mode is on
+    if (settings.fpsCounter) {
+      showFPSCounter();
+    }
+  } else {
+    window.gameDebug = false;
+    hideFPSCounter();
+  }
+  
+  // FPS Counter
+  if (settings.fpsCounter && !settings.debugMode) {
+    showFPSCounter();
+  } else if (!settings.fpsCounter) {
+    hideFPSCounter();
+  }
+}
+
+function showFPSCounter() {
+  if (document.getElementById('fpsCounter')) return;
+  
+  const fpsElement = document.createElement('div');
+  fpsElement.id = 'fpsCounter';
+  fpsElement.style.cssText = `
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #8a2be2;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    z-index: 10000;
+    border: 1px solid rgba(138, 43, 226, 0.5);
+  `;
+  fpsElement.textContent = 'FPS: 0';
+  document.body.appendChild(fpsElement);
+  
+  // Simple FPS counter
+  let lastTime = performance.now();
+  let frames = 0;
+  
+  function updateFPS() {
+    frames++;
+    const currentTime = performance.now();
+    if (currentTime >= lastTime + 1000) {
+      const fps = Math.round((frames * 1000) / (currentTime - lastTime));
+      fpsElement.textContent = `FPS: ${fps}`;
+      frames = 0;
+      lastTime = currentTime;
+    }
+    if (document.getElementById('fpsCounter')) {
+      requestAnimationFrame(updateFPS);
+    }
+  }
+  updateFPS();
+}
+
+function hideFPSCounter() {
+  const fpsElement = document.getElementById('fpsCounter');
+  if (fpsElement) {
+    fpsElement.remove();
+  }
+}
+
+// Load settings on page load
+document.addEventListener('DOMContentLoaded', loadSettings);
 
 function showTournament() {
   showNotification('Turnuva modu yakında gelecek!', 'info');

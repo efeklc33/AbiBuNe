@@ -1,0 +1,158 @@
+/* Enhanced Animations for Game Modes and Elements */
+
+.game-modes {
+  animation: slideInFromRight 1s ease-out 0.3s both;
+}
+
+.mode-card {
+  animation: bounceIn 0.8s ease-out;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.mode-card:nth-child(1) { animation-delay: 0.1s; }
+.mode-card:nth-child(2) { animation-delay: 0.2s; }
+.mode-card:nth-child(3) { animation-delay: 0.3s; }
+
+.mode-card:hover {
+  transform: translateY(-10px) scale(1.03);
+  box-shadow: 0 15px 40px rgba(138, 43, 226, 0.4);
+}
+
+.quick-actions {
+  animation: fadeInUp 1s ease-out 0.6s both;
+}
+
+.quick-btn {
+  animation: bounceIn 0.6s ease-out;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.quick-btn:nth-child(1) { animation-delay: 0.7s; }
+.quick-btn:nth-child(2) { animation-delay: 0.8s; }
+.quick-btn:nth-child(3) { animation-delay: 0.9s; }
+.quick-btn:nth-child(4) { animation-delay: 1s; }
+
+.quick-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 10px 25px rgba(138, 43, 226, 0.5);
+}
+
+/* Enhanced Floating Shapes */
+.floating-shapes .shape {
+  background: linear-gradient(45deg, rgba(138, 43, 226, 0.1), rgba(75, 0, 130, 0.1));
+  border-radius: 50%;
+  animation: float 8s ease-in-out infinite;
+}
+
+.floating-shapes .shape-1 {
+  width: 80px;
+  height: 80px;
+  top: 10%;
+  left: 10%;
+  animation-delay: 0s;
+}
+
+.floating-shapes .shape-2 {
+  width: 120px;
+  height: 120px;
+  top: 20%;
+  right: 15%;
+  animation-delay: -2s;
+}
+
+.floating-shapes .shape-3 {
+  width: 60px;
+  height: 60px;
+  bottom: 30%;
+  left: 20%;
+  animation-delay: -4s;
+}
+
+.floating-shapes .shape-4 {
+  width: 100px;
+  height: 100px;
+  bottom: 20%;
+  right: 25%;
+  animation-delay: -6s;
+}
+
+.floating-shapes .shape-5 {
+  width: 40px;
+  height: 40px;
+  top: 50%;
+  left: 50%;
+  animation-delay: -1s;
+}
+
+.floating-shapes .shape-6 {
+  width: 90px;
+  height: 90px;
+  top: 70%;
+  right: 40%;
+  animation-delay: -3s;
+}
+
+/* Player Stats Animation */
+.player-stats {
+  animation: fadeInUp 1.2s ease-out 0.8s both;
+}
+
+.stat-card {
+  animation: bounceIn 0.6s ease-out;
+  transition: all 0.3s ease;
+}
+
+.stat-card:nth-child(1) { animation-delay: 1s; }
+.stat-card:nth-child(2) { animation-delay: 1.1s; }
+.stat-card:nth-child(3) { animation-delay: 1.2s; }
+.stat-card:nth-child(4) { animation-delay: 1.3s; }
+
+.stat-card:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 10px 25px rgba(138, 43, 226, 0.3);
+}
+
+/* Modal Animations */
+.modal {
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-content {
+  animation: bounceIn 0.5s ease-out;
+}
+
+/* Input Focus Animations */
+input[type="text"]:focus {
+  animation: inputGlow 0.3s ease-out;
+}
+
+@keyframes inputGlow {
+  0% { box-shadow: 0 0 20px rgba(75, 0, 130, 0.5); }
+  50% { box-shadow: 0 0 40px rgba(75, 0, 130, 0.8); }
+  100% { box-shadow: 0 0 30px rgba(75, 0, 130, 0.8); }
+}
+
+/* Navigation Animation */
+.top-nav {
+  animation: slideDown 0.8s ease-out;
+}
+
+@keyframes slideDown {
+  0% { transform: translateY(-100%); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.nav-btn {
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.nav-btn:hover {
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 5px 15px rgba(138, 43, 226, 0.3);
+}
+
+/* Disable animations class */
+.no-animations * {
+  animation: none !important;
+  transition: none !important;
+}
